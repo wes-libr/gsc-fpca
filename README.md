@@ -6,6 +6,8 @@ This repository holds the code for the paper
 
 The code is for the revised version of the paper (November 2026). Code for the first version, posted on bioRxiv on 25 February 2026, is in the earlier history of this repository.
 
+**The paper cites Lucy Shao's repository, https://github.com/l66shao/GSC-FPCA, as the reference version of this code.** This repository is a mirror of it, kept by Wesley Thompson. If the two ever differ, use that one.
+
 ## The method in brief
 
 GSC-FPCA estimates the average treatment effect on the treated (ATT) when units are observed at irregular, sparse times. Each unit's untreated outcome is modeled as a smooth trajectory: a mean function, covariate effects, and a few functional principal components (FPCs) with unit-specific scores, plus measurement error. The model is fitted with a Gibbs sampler.
