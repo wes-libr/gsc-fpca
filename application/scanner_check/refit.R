@@ -1,4 +1,4 @@
-# GSC-FPCA refits (k = 2) with recorded scanner changes and study year as time-varying covariates of the controls' model,
+# GSC-FPCA refits (k = 2) with recorded scanner changes and study year as visit-level covariates with constant effects (covs_c),
 # and the ICV negative control split into gray matter, white matter and CSF. Usage: Rscript scanner_check/refit.R <worker 0|1>
 args <- commandArgs(TRUE); wk <- as.numeric(args[1])
 source("app2_core.R")

@@ -245,10 +245,10 @@ t(table_demo)
 #covs_t=c("icv_baseline","base_age","sexF")
 #covs_c=c("race_labelAsian","race_labelBlack","race_labelOther","siteB","siteC","siteD","siteE")
 
-covs_t=c("icv_baseline","sexF","race_labelBlack","race_labelAsian","race_labelWhite")#this is now non-time varying covariate
-covs_c=c("zeros")#this is now the time varying covariate, if you don't want any, just include the variable zeros in the data
+covs_t=c("icv_baseline","sexF","race_labelBlack","race_labelAsian","race_labelWhite")# covariates with age-varying effects Gamma_j(t) (X_sparse); here baseline covariates, constant within person
+covs_c=c("zeros")# covariates with constant effects beta (X_sparse_c), e.g. site or scanner indicators; values may change from visit to visit. If you don't want any, use the column zeros and set est_beta_c=0
 est_beta=1 #,"siteB"    ,               "siteC"    ,               "siteD"    ,             "siteE" 
-est_beta_c=0 #if you want any time varying,set this to 1 ,"race_labelAsian","race_labelBlack","race_labelOther"
+est_beta_c=0 # set to 1 to estimate constant effects for covs_c ,"race_labelAsian","race_labelBlack","race_labelOther"
 #
 est_mu=1
 
@@ -335,7 +335,7 @@ cov_list_c <- control %>%
   pull(time)
 
 X_sparse_b=cov_list 
-X_sparse_b_c=cov_list_c# non-time varying coefficient
+X_sparse_b_c=cov_list_c# constant (age-invariant) coefficients
 P_X=ncol(X_sparse_b[[1]])
 P_X_c=ncol(X_sparse_b_c[[1]])
 Q=APP_Q#number of FPC
@@ -724,7 +724,7 @@ for(i in 1:length(unique(exposed_id))){
     }
   }
   
- #no non-time var for now 
+ # no constant-effect covariates for now (covs_c is zeros)
 #  for(k in 1:length(covs_c)){
 #    fitted1=fitted1+t(as.matrix(as.numeric(cov_c_df[df$id==id_i,k])*(df_beta_c[,k])))
 #  }

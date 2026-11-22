@@ -10,6 +10,8 @@ M$sf_bilat <- M$superiorfrontal_grayvol.new      # true left/right average
 M$sf_orig <- M$superiorfrontal_grayvol           # column in ncanda_dat.csv; in the version used for the first posting,
                                                  # (left SF volume + left frontal pole vertex count)/2
 orig_cols <- c("visit", "sri24_icv_brain_volume", "site", "sex", "visit_age", "race_label", "binge", "id", "base_age", "sexM", "sexF", "superiorfrontal_grayvol", "binge12", "first_binge_visit", "base_age_cat12_14", "base_age_cat15_17", "base_age_cat18_21", "abnormal")
+# covs_t: covariates with age-varying effects Gamma_j(t), one spline coefficient vector each (X_sparse in the sampler).
+# covs_c: covariates with constant effects beta (X_sparse_c); values may change from visit to visit (site, scanner, study year).
 defaults <- list(label = "x", outcome = "sf_bilat", Q = 1, amax = 21, discont = "drop", controls = "all", covs_t = c("icv_baseline", "sexF", "race_labelBlack", "race_labelAsian", "race_labelWhite"), covs_c = NULL,
                  nloop = 2500, burnin = 500, thin = 1, seed = 20261104, psloo = 0, placebo = FALSE, fake = FALSE, keep_draws = TRUE, want = NULL)
 
