@@ -12,7 +12,7 @@ p <- ggplot(x, aes(t, bias, color = method, shape = method, group = method)) +
   facet_wrap(~panel, nrow = 1) +
   scale_color_manual(values = cols, name = NULL) + scale_shape_manual(values = shp, name = NULL) +
   scale_x_continuous(breaks = (1:7) / 10) +
-  labs(x = "Scaled time since the last pre-exposure observation", y = "Mean error of the estimated ATT") +
+  labs(x = "Scaled time since the last pre-treatment observation", y = "Mean error of the estimated ATT") +
   theme_minimal(base_size = 11) +
   theme(legend.position = "top", panel.grid.minor = element_blank(), panel.grid.major = element_line(color = "grey92", linewidth = .3), strip.text = element_text(face = "bold"), axis.title = element_text(color = "grey25"), axis.text = element_text(color = "grey35"))
 ggsave("Figure3.png", p, width = 8, height = 3.8, dpi = 300, bg = "white")

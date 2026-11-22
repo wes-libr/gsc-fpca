@@ -26,7 +26,7 @@ prep_data <- function(o) {
   for (v in intersect(c("ses_parent_yoe_b", "fh_alc_density_b", "pds_b"), c(o$covs_t, o$covs_c))) NULL
   ever <- tapply(d$binge12, d$id, max)
   ex_ids <- as.numeric(names(ever)[ever > 0])
-  # exposed units whose binge later fell below 12
+  # treated units whose binge later fell below 12
   mn <- tapply(ifelse(d$binge12 > 0, d$binge, Inf), d$id, min)
   disc_ids <- as.numeric(names(mn)[is.finite(mn) & mn < 12])
   counts <- list(window_ids = length(unique(d$id)), ever = length(ex_ids), disc = length(disc_ids))
@@ -42,7 +42,7 @@ prep_data <- function(o) {
       if (length(lo)) keep[w[d$visit[w] >= d$visit[lo[1]]]] <- FALSE
     }
     d <- d[keep, ]
-  } # "itt": keep all rows, exposed from first crossing on
+  } # "itt": keep all rows, treated from first crossing on
   ever <- tapply(d$binge12, d$id, max)
   con_ids <- as.numeric(names(ever)[ever == 0])
   if (o$controls == "no_later") {
@@ -88,7 +88,7 @@ run_app <- function(opt) {
   o <- modifyList(defaults, opt); set.seed(o$seed)
   d <- prep_data(o); d <- add_covariates(d, o)
   if (o$fake) {
-    # In-space placebo: drop the exposed, give randomly chosen controls a pseudo-onset drawn from the exposed onset ages.
+    # In-space placebo: drop the treated, give randomly chosen controls a pseudo-onset drawn from the treated onset ages.
     # True effect zero, so the estimate should be near zero with an interval that covers it.
     ever <- tapply(d$binge12, d$id, max); ex <- as.numeric(names(ever)[ever > 0])
     ons <- as.numeric(tapply(d$visit_age[d$binge12 > 0], d$id[d$binge12 > 0], min))
@@ -142,7 +142,7 @@ run_app <- function(opt) {
   fit <- run_mcmc(o$nloop, o$burnin, o$thin, Y, Tm, Xt, Xc, phi_t, array(0, dim = c(K, 1)), matrix(0, K, length(covs_t)), array(0, length(covs_c)),
                   array(0, dim = c(Q, N)), array(0, dim = c(K, Q)), diag(rep(1, Q), Q), 0.1, diag(rep(1, Q), Q), 1, 1, 1, 1, 1, 1, 1, est_beta_c, o$psloo, bc)
   S <- length(fit[[1]])
-  # post-exposure and pre-exposure rows of exposed units
+  # post-treatment and pre-treatment rows of treated units
   df <- d[d$id %in% ex_ids & d$id %in% ids, ]; df <- df[order(df$id, df$visit), ]
   lastpre <- tapply(df$visit_age[df$group == "control"], df$id[df$group == "control"], max)
   df$T_scaled <- df$visit_age - lastpre[as.character(df$id)]

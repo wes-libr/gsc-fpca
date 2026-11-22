@@ -71,7 +71,7 @@ simulate2 <- function(Ntr, Nco, lambda, n_min, dgp, tc, select_b = 1, n_cap = 10
     m <- n
     if (trt[i]) {
       m <- max(floor(2 * n / 3), 1)
-      if (dgp == "dip" && n >= 2) {   # exposure follows a transient low: T0 is the visit with the lowest error
+      if (dgp == "dip" && n >= 2) {   # treatment follows a transient low: T0 is the visit with the lowest error
         m <- which.min(e[1:(n - 1)])
       }
     }
@@ -106,7 +106,7 @@ fit_gsc <- function(d, Q, nloop = 1000, burnin = 500, psloo = 0) {
            nloop = nloop, burnin = burnin, thin = 1, orth = FALSE, sim = FALSE, PSLOO = psloo, b_control = bc)
 }
 
-# Membership of post-exposure observations in a reporting bin. Bin labels are event time rounded to 0.1, or "all".
+# Membership of post-treatment observations in a reporting bin. Bin labels are event time rounded to 0.1, or "all".
 in_bin <- function(b, binvec) if (b == "all") rep(TRUE, length(binvec)) else binvec == b
 
 # ATT errors for GSC-FPCA under both prior means. An error is observed no-treatment outcome minus counterfactual,
@@ -199,7 +199,7 @@ did_att <- function(d, B_mat, bins, nboot = 200) {
 }
 
 # Linear mixed models, the common practice: spline time curve, covariates, random intercept and slope.
-# lme1 has one exposure coefficient, as in the empirical example. lme2 has one coefficient per 0.1 event-time bin,
+# lme1 has one treatment coefficient, as in the empirical example. lme2 has one coefficient per 0.1 event-time bin,
 # and its "all" estimate is their observation-weighted mean. Returns errors relative to the truth for each effect shape.
 lme_att <- function(d, B_mat, bins, shapes = "linear") {
   W <- B_mat[d$time_idx, , drop = FALSE]; colnames(W) <- paste0("b", 1:ncol(W))
@@ -245,7 +245,7 @@ lme_att <- function(d, B_mat, bins, shapes = "linear") {
 
 # Interactive fixed effects (fect, method "ife") and matrix completion (method "mc") on the 20-point grid, with the
 # same covariates as the other estimators. The fit imputes from untreated cells; the simulated Y is the no-treatment
-# outcome, so eff on a post-exposure cell is the error of the estimate there. Units with fewer than min_T0 untreated
+# outcome, so eff on a post-treatment cell is the error of the estimate there. Units with fewer than min_T0 untreated
 # cells are dropped by the package; errors are averaged over the cells it keeps, and "kept" records the share of
 # treated units retained. r is fixed unless cv = TRUE. With se = TRUE the bootstrap interval is for "all" only.
 fect_att <- function(d, B_mat, bins, method = "ife", r = 2, min_T0 = NULL, cv = NULL, rmax = 3, se = FALSE, nboots = 100, label = method) {

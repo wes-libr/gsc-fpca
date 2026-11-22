@@ -12,14 +12,14 @@ specs <- list(
   list("$k=1$", "primary_s1", NULL), list("$k=3$", "k3_s1", NULL), list("$k=4$", "kk4", NULL), list("$k=5$", "kk5", NULL),
   list("\\emph{Outcome}", NULL),
   list("Left hemisphere only", "k2_left", "left"), list("Right hemisphere only", "k2_right", "right"),
-  list("\\emph{Exposure definition}", NULL),
-  list("Discontinuers as exposed", "k2_disc_itt", "disc_itt"), list("Discontinuers censored", "k2_disc_censor", "disc_censor"),
+  list("\\emph{Treatment definition}", NULL),
+  list("Discontinuers as treated", "k2_disc_itt", "disc_itt"), list("Discontinuers censored", "k2_disc_censor", "disc_censor"),
   list("\\emph{Controls}", NULL),
-  list("Excluding later exposed", "k2_ctl_nolater", "ctl_nolater"), list("No binge drinking", "k2_ctl_zero", "ctl_zero"),
+  list("Excluding later treated", "k2_ctl_nolater", "ctl_nolater"), list("No binge drinking", "k2_ctl_zero", "ctl_zero"),
   list("\\emph{Covariates added}", NULL),
   list("Site", "k2_site", "site"), list("Site, education, family history, puberty", "k2_rich", "rich"), list("Above, baseline cannabis, tobacco", "k2_rich_sub", "rich_sub"), list("Site, cumulative cannabis, tobacco", "k2_couse", "couse"),
   list("\\emph{Age range}", NULL),
-  list("Post-exposure visits to age 20.5", "k2_age_bins", NULL, "gsc1", "all age<=20.5"),
+  list("Post-treatment visits to age 20.5", "k2_age_bins", NULL, "gsc1", "all age<=20.5"),
   list("Ages to 25, discontinuers dropped", "k2_win25", "win25"), list("Ages to 25, discontinuers censored", "k2_win25_censor", "win25_censor"))
 rows <- character()
 for (sp in specs) {
@@ -45,7 +45,7 @@ if (!is.null(tab)) {
   pretty <- c(bankssts = "Banks of superior temporal sulcus", caudalanteriorcingulate = "Caudal anterior cingulate", caudalmiddlefrontal = "Caudal middle frontal", cuneus = "Cuneus", entorhinal = "Entorhinal", fusiform = "Fusiform", inferiorparietal = "Inferior parietal", inferiortemporal = "Inferior temporal", isthmuscingulate = "Isthmus cingulate", lateraloccipital = "Lateral occipital", lateralorbitofrontal = "Lateral orbitofrontal", lingual = "Lingual", medialorbitofrontal = "Medial orbitofrontal", middletemporal = "Middle temporal", parahippocampal = "Parahippocampal", paracentral = "Paracentral", parsopercularis = "Pars opercularis", parsorbitalis = "Pars orbitalis", parstriangularis = "Pars triangularis", pericalcarine = "Pericalcarine", postcentral = "Postcentral", posteriorcingulate = "Posterior cingulate", precentral = "Precentral", precuneus = "Precuneus", rostralanteriorcingulate = "Rostral anterior cingulate", rostralmiddlefrontal = "Rostral middle frontal", superiorfrontal = "Superior frontal", superiorparietal = "Superior parietal", superiortemporal = "Superior temporal", supramarginal = "Supramarginal", frontalpole = "Frontal pole", temporalpole = "Temporal pole", transversetemporal = "Transverse temporal", insula = "Insula")
   writeLines(sprintf("%s & %s & %s & %s \\\\", pretty[nm(tab$roi)], neg(tab$est), ci(tab$lo, tab$hi), sprintf("%.3f", tab$bh)), "tab_roi_rows.tex")
 }
-# calibration with pseudo-exposures
+# calibration with pseudo-treatments
 fk <- list.files("res2", pattern = "^k2_fake_.*rds$", full.names = TRUE)
 if (length(fk)) {
   z <- do.call(rbind, lapply(fk, function(f) { x <- pick(readRDS(f)); data.frame(est = x$est, lo = x$lo, hi = x$hi, n = x$n, units = x$units) }))

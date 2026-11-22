@@ -44,7 +44,7 @@ LifeUseRunningTotal <- function(data){
 
 dat <- read.csv(Sys.getenv("NCANDA_FULLDATA", "data/FullData_Y9.csv"))
 
-## exposure variable-binge drinking
+## treatment variable-binge drinking
 dat$binge_YN = dat$youthreport1_cddr27
 dat$binge = dat$youthreport1_cddr30
 dat$binge[dat$binge_YN==0 & !is.na(dat$binge_YN)] = 0

@@ -4,7 +4,7 @@ library(splines); library(MASS)
 
 # Same calculations as basis_setup_sparse (basis_setup_sparse_Lucy.R) for the elements the
 # simulation uses, with the time lookup vectorized. It also accepts subjects with a single
-# pre-exposure observation, which the original's Phi_D_T loop cannot (2:1 indexing).
+# pre-treatment observation, which the original's Phi_D_T loop cannot (2:1 indexing).
 basis_setup_sparse=function(time_sparse,nknots=3,orth=FALSE,delta=1/1000,plotit=FALSE){
   N=length(time_sparse)
   for(i in 1:N) time_sparse[[i]][[1]]=round(time_sparse[[i]][[1]]/delta)*delta
@@ -76,7 +76,7 @@ run_rep=function(Ntr,Nco,lambda,n_min,params,nloop,burnin,thin=1,bins=seq(.1,1,.
                nloop=nloop,burnin=burnin,thin=thin,orth=FALSE,sim=FALSE,PSLOO=0,b_control=as.numeric(b_control))
   A=fit[[1]]; Mu=fit[[2]]; Sg=unlist(fit[[5]]); Th=fit[[6]]; Be=fit[[7]]; Bc=fit[[8]]; pc=fit[[9]][[5]][[1]]
   S=length(A)
-  # counterfactual draws for each treated post-exposure observation: obs x draws
+  # counterfactual draws for each treated post-treatment observation: obs x draws
   po=do.call(rbind,lapply(post,function(p) data.frame(i=p$i,t=p$t,delta=p$delta,Y0=p$Y0,e=p$e,Yobs=p$Yobs)))
   Xm=do.call(rbind,lapply(post,function(p) p$X)); Xcm=do.call(rbind,lapply(post,function(p) p$Xc))
   Pm=pc[,round(po$t,3)*1000+1,drop=FALSE]

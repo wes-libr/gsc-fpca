@@ -290,7 +290,7 @@ List run_mcmc(int nloop, int burnin, int thin, List Y_sparse, List time_sparse, 
     // ----------------Treated scores and treated-group mean----------------
     // The components above come from controls only. Treated units enter here and nowhere else.
     // nu is the treated group's mean score, with a flat prior and the individual scores integrated out:
-    //   nu | components, pre-exposure data ~ N(G^{-1} b, G^{-1}), G = sum_i D^{-1}(I - R_i), b = sum_i D^{-1} a_i,
+    //   nu | components, pre-treatment data ~ N(G^{-1} b, G^{-1}), G = sum_i D^{-1}(I - R_i), b = sum_i D^{-1} a_i,
     // where a_i and Omega_i are the posterior mean and covariance of alpha_i under prior N(0, D), and
     // R_i = Omega_i D^{-1}. Under prior N(nu, D) the posterior mean is a_i + R_i nu with the same Omega_i.
     // Alpha holds draws under prior mean 0 and Alpha_tm draws under prior mean nu, with common noise.

@@ -2,18 +2,18 @@
 # removed or restarted at any time: Rscript run_sim2.R <worker>. Results are appended by task; a task is finished when
 # claims/<cell>_<iter>.done exists. After a crash, with no workers running, remove claim folders lacking a .done file.
 #
-# Scenarios. Exposure and sparsity are as in Section 3 unless noted; the effect is 5*delta, so errors of estimators that
+# Scenarios. Treatment and sparsity are as in Section 3 unless noted; the effect is 5*delta, so errors of estimators that
 # impute from untreated cells do not depend on its shape. Outcomes in "none" follow the Section 3 model.
-#   none    exposure unrelated to scores
-#   select  the Ntr largest of U = alpha_1 + alpha_2 + logistic noise are exposed
+#   none    treatment unrelated to scores
+#   select  the Ntr largest of U = alpha_1 + alpha_2 + logistic noise are treated
 #   growth  intercept and slope (correlation .3) rather than FPCs, Ornstein-Uhlenbeck plus white errors, selection as above
 #   outside mean and FPCs outside the fitted spline span, Gamma(2) scores, t_5 errors, selection as above
 #   wrongk  three components, two fitted, selection as above
 #   visits  visit counts depend on the first score, selection as above
-#   dip     exposure comes right after a visit with an unusually low error, selection as above; no method should cope
+#   dip     treatment comes right after a visit with an unusually low error, selection as above; no method should cope
 #   dense   every unit observed at all 20 grid points, selection as above
 #   looic   k chosen from {1,2,3} by LOOIC under select (true k=2) and wrongk (true k=3)
-# Methods: gsc1 (separate prior mean for exposed units), gsc0 (prior mean zero), did (imputation), lme1, lme2 (mixed models),
+# Methods: gsc1 (separate prior mean for treated units), gsc0 (prior mean zero), did (imputation), lme1, lme2 (mixed models),
 #          ife2 (interactive fixed effects with r=2), ifecv (r by cross validation), mc (matrix completion).
 library(Rcpp); library(MASS); library(splines); pdf(NULL); Sys.setenv(COMEGA = "1")
 worker <- commandArgs(TRUE)[1]

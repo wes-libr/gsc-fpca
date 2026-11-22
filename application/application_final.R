@@ -9,7 +9,7 @@ library(RcppArmadillo)
 library(Rcpp)
 library(splines)
 library(lme4)
-#library(lmerexposed) 
+#library(lmerTest) 
 library(ggplot2)
 library(nlme)
 pdf(NULL)
@@ -61,7 +61,7 @@ dat=dat[dat$visit_age <=21,]
 dim(dat)
 length(unique(dat$id))
 
-## keep only the exposed that were initially exposed from ages 16 and older
+## keep only the treated that were initially treated from ages 16 and older
 #dat$keep <- 1
 #for(i in 1:length(unique(dat$id))){
 #  dat_i = dat[dat$id == unique(dat$id)[i],]
@@ -74,7 +74,7 @@ length(unique(dat$id))
 #dim(dat)
 #length(unique(dat$id))
 
-## keep only those exposed continuously after exposure start
+## keep only those treated continuously after treatment start
 dat$keep <- 1
 for(i in 1:length(unique(dat$id))){
   dat_i = dat[dat$id == unique(dat$id)[i],]
@@ -88,7 +88,7 @@ dat$keep <- NULL
 dim(dat)
 n = length(unique(dat$id)); show(n)
 
-## compute age at exposure start
+## compute age at treatment start
 
 dat$age_start <- NA
 for(i in 1:n){
@@ -300,7 +300,7 @@ visit_list_exposed <- exposed %>%
   summarise(time = list(list(visit_age2)), .groups = "drop") %>%
   pull(time)
 
-#visit_list=append(visit_list_control,visit_list_exposed)#1:785 control, 786:1031 exposed
+#visit_list=append(visit_list_control,visit_list_exposed)#1:785 control, 786:1031 treated
 visit_list=visit_list_control
 N=length(Y_sparse2_b)
 nknots=3
@@ -619,7 +619,7 @@ table(dat_all$visit_scaled)
 counter=0
 
 
-#align by previous year where the exposure actually starts
+#align by previous year where the treatment actually starts
 
 table(dat_all$T_scaled)
 counter=0
@@ -806,7 +806,7 @@ p1=ggplot(plot_data_att, aes(x = Time, y = ATT)) +
 
 
 
-#--------ATT rerun: post-exposure observations only, with noise draws----------
+#--------ATT rerun: post-treatment observations only, with noise draws----------
 sigma_draws=unlist(SIGMA_OMEGA_array)
 stopifnot(length(sigma_draws)==ncol(fit_summary))
 set.seed(APP_SEED+1)
@@ -824,7 +824,7 @@ if(placebo){
 }else{
   ispost=df$binge12==1
   rows=list()
-  yr=floor(df$T_scaled+0.5)  # nearest year since the last pre-exposure visit
+  yr=floor(df$T_scaled+0.5)  # nearest year since the last pre-treatment visit
   for(k in -3:0){b=!ispost&yr==k; rows[[length(rows)+1]]=att_row(b,sprintf("year %d",k),k,"in-sample")}
   for(k in 1:5){b=ispost&yr==k; rows[[length(rows)+1]]=att_row(b,sprintf("year %d",k),k,if(k<=3) "post" else "post-sparse")}
   for(k in 0:3){b=ispost&df$T_scaled>=k&df$T_scaled<k+1; rows[[length(rows)+1]]=att_row(b,sprintf("floor [%d,%d)",k,k+1),NA,"post-floor")}
@@ -867,10 +867,10 @@ pd=att_table[att_table$kind%in%c("in-sample","post"),]; pd$lo=ifelse(pd$kind=="p
 p1=ggplot(pd,aes(x=x,y=est,color=kind,fill=kind))+
   geom_ribbon(aes(ymin=lo,ymax=hi),alpha=.2,color=NA)+geom_line(linewidth=1)+geom_point(size=2)+
   geom_hline(yintercept=0,color="red",linetype="dashed")+geom_vline(xintercept=0,color="red",linetype="dashed")+
-  scale_color_manual(values=c("in-sample"="grey40","post"="blue"),labels=c("in-sample"="Pre-exposure residual (in sample)","post"="ATT (post-exposure)"))+
-  scale_fill_manual(values=c("in-sample"="grey40","post"="blue"),labels=c("in-sample"="Pre-exposure residual (in sample)","post"="ATT (post-exposure)"))+
+  scale_color_manual(values=c("in-sample"="grey40","post"="blue"),labels=c("in-sample"="Pre-treatment residual (in sample)","post"="ATT (post-treatment)"))+
+  scale_fill_manual(values=c("in-sample"="grey40","post"="blue"),labels=c("in-sample"="Pre-treatment residual (in sample)","post"="ATT (post-treatment)"))+
   scale_x_continuous(breaks=-3:3)+
-  labs(title="Average treatment effect on the treated (ATT)",x="Years since last pre-exposure visit (nearest year)",y="Superior frontal gray volume (standardized)",color=NULL,fill=NULL)+
+  labs(title="Average treatment effect on the treated (ATT)",x="Years since last pre-treatment visit (nearest year)",y="Superior frontal gray volume (standardized)",color=NULL,fill=NULL)+
   theme_minimal()+theme(plot.title=element_text(hjust=.5,face="bold"),legend.position="top",panel.grid.major=element_line(color="grey90"),panel.grid.minor=element_blank())
 }else{ saveRDS(att_table,file.path(APP_OUT,"placebo.rds")); quit(save="no") }
 

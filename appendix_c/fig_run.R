@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# Curves and pre-exposure residuals for Figures 1-3: scenario B, N_tr=40, N_co=100 (cell 5).
+# Curves and pre-treatment residuals for Figures 1-3: scenario B, N_tr=40, N_co=100 (cell 5).
 # Same seeds and random-number use as run_simulation.R, so the ATT columns must match the main results exactly.
 # Usage: Rscript fig_run.R <worker 1..K> <K> <first iter> <last iter>
 a=commandArgs(TRUE); w=as.integer(a[1]); K=as.integer(a[2]); i0=as.integer(a[3]); i1=as.integer(a[4])
@@ -54,7 +54,7 @@ run_rep_fig=function(Ntr,Nco,lambda,n_min,params,nloop,burnin,thin=1,bins=seq(.1
   for(b in bins){w=abs(po$bin-b)<1e-8; if(any(w)) r[[length(r)+1]]=one(w,sprintf("%.1f",b))}
   r[[length(r)+1]]=one(rep(TRUE,nrow(po)),"all")
   att=do.call(rbind,r)
-  # in-sample pre-exposure residuals of treated units, by nearest 0.1 before the last pre-exposure time
+  # in-sample pre-treatment residuals of treated units, by nearest 0.1 before the last pre-treatment time
   dq=draws(pre); q=dq$po; q$res=q$Yobs-rowMeans(dq$Fm); q$bin=round(q$delta*10)/10
   res=aggregate(res~bin,q,mean); res$n=aggregate(res~bin,q,length)$res
   # posterior means of the identified functionals on a common grid

@@ -4,7 +4,7 @@ library(data.table)
 F <- Sys.getenv("NCANDA_FULLDATA", "data/FullData_Y9.csv")
 hd <- names(fread(F, nrows = 0))
 gv <- grep("_grayvol\\.[xy]$", hd, value = TRUE)
-keep <- c("subject", "arm", "visit", "visit_age", "site", "sex", "race", "hispanic", "exceeds_bl_drinking", "sri24_icv_brain_volume", "sri24_icv_brain_gm", "sri24_icv_brain_wm",
+keep <- c("subject", "arm", "visit", "visit_age", "site", "sex", "race", "hispanic", "exceeds_bl_drinking", "sri24_icv_brain_volume", "sri24_icv_brain_gm", "sri24_icv_brain_wm", "sri24_icv_brain_csf",
   "youthreport1_cddr27", "youthreport1_cddr30", "youthreport1_cddr4a", "youthreport1_cddr4b", "youthreport1_cddr55a", "youthreport1_cddr55b", "youthreport1_cddr19", "youthreport1_cddr20",
   "ses_parent_yoe", "ses_parent_faminc", "ses_parent_score", "parent_edu", "fh_alc_density", "fh_drug_density", "pds_score", "pds_pubcat", "bmi_zscore", "family_id", "scanner", "scanner_model", "mri_structural_age",
   "ssaga_youth_externalizing", "highrisk_ssaga_extern_tot", "cesd_score", gv)

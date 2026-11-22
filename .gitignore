@@ -1,0 +1,18 @@
+# Participant-level data and derived files: never commit
+application/data/
+*.rds
+*.Rdata
+*.RData
+ncanda_dat.csv
+FullData_Y9.csv
+brain-abnormalities.csv
+# Run outputs and caches
+cpp_cache/
+claims/
+res2/
+results2/
+out_final_k2/
+application/scanner_check/out/
+application/scanner_check/fig/
+.DS_Store
+.Rhistory
