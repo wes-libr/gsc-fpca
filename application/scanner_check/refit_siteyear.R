@@ -22,10 +22,10 @@ assign("M", M, envir = globalenv())
 dir.create("scanner_check/out", recursive = TRUE, showWarnings = FALSE)
 write.csv(cells, file.path("scanner_check/out", "site_year_cells.csv"), row.names = FALSE)
 icv_t <- c("sexF", "race_labelBlack", "race_labelAsian", "race_labelWhite")
-specs <- list(list(label = "icv_siteyear", Q = 2, outcome = "sri24_icv_brain_volume", covs_t = icv_t, covs_c = lv),
-              list(label = "sf_siteyear", Q = 2, covs_c = lv),
-              list(label = "icv_siteyear_placebo", Q = 2, outcome = "sri24_icv_brain_volume", covs_t = icv_t, covs_c = lv, placebo = TRUE),
-              list(label = "gm_siteyear", Q = 2, outcome = "sri24_icv_brain_gm", covs_c = lv))
+specs <- list(list(label = "icv_siteyear", Q = 3, outcome = "sri24_icv_brain_volume", covs_t = icv_t, covs_c = lv),
+              list(label = "sf_siteyear", Q = 3, covs_c = lv),
+              list(label = "icv_siteyear_placebo", Q = 3, outcome = "sri24_icv_brain_volume", covs_t = icv_t, covs_c = lv, placebo = TRUE),
+              list(label = "gm_siteyear", Q = 3, outcome = "sri24_icv_brain_gm", covs_c = lv))
 for (i in seq_along(specs)) {
   if ((i - 1) %% 2 != wk) next
   sp <- specs[[i]]; t0 <- Sys.time()

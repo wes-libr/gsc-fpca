@@ -14,7 +14,7 @@ att <- function(f, dir = R2) { a <- read.csv(file.path(dir, paste0(f, "_att.csv"
 # A. ICV: observed minus synthetic control by year relative to onset
 bx <- function(b) ifelse(grepl("^pre", b), as.numeric(sub("pre ", "", b)), as.numeric(sub("year ", "", b)))
 lvA <- c("As in the paper", "+ site + scanner model", "+ a level for each site and study year")
-A <- rbind(transform(att("k2_negctl_icv"), model = lvA[1]), transform(att("icv_scan"), model = lvA[2]), transform(att("icv_siteyear"), model = lvA[3]))
+A <- rbind(transform(att("k3_negctl_icv"), model = lvA[1]), transform(att("icv_scan"), model = lvA[2]), transform(att("icv_siteyear"), model = lvA[3]))
 A <- A[A$bin != "all", ]; A$x <- bx(A$bin); A$period <- ifelse(A$x <= 0, "pre", "post")
 A$model <- factor(A$model, levels = lvA)
 pl <- rbind(transform(att("icv_placebo"), model = lvA[1]), transform(att("icv_scan_placebo"), model = lvA[2]), transform(att("icv_siteyear_placebo"), model = lvA[3]))
@@ -70,10 +70,10 @@ fe <- read.csv(file.path(OUT, "within_person_post_change.csv"))
 row <- function(outc, lab, f, dir = R2) { a <- att(f, dir); a <- a[a$bin == "all", ]; data.frame(outcome = outc, spec = lab, est = a$mm3, lo = a$lo3, hi = a$hi3) }
 ferow <- function(outc, y, adj, lab) { x <- fe[fe$outcome == y & fe$adjust == adj, ]; data.frame(outcome = outc, spec = lab, est = x$est_mm3, lo = x$lo_mm3, hi = x$hi_mm3) }
 D <- rbind(
-  row("Intracranial volume", "As in the paper", "k2_negctl_icv", PUB), row("Intracranial volume", "+ site", "k2_negctl_icv_site", PUB), row("Intracranial volume", "+ site + scanner model", "icv_scan"),
+  row("Intracranial volume", "As in the paper", "k3_negctl_icv", PUB), row("Intracranial volume", "+ site", "k3_negctl_icv_site", PUB), row("Intracranial volume", "+ site + scanner model", "icv_scan"),
   row("Intracranial volume", "+ site + scanner + study year", "icv_scan_wave"), row("Intracranial volume", "+ site + scanner + study year by site", "icv_scan_sitewave"), row("Intracranial volume", "+ a level for each site and study year", "icv_siteyear"),
   ferow("Intracranial volume", "sri24_icv_brain_volume", "none", "Within-person regression"), ferow("Intracranial volume", "sri24_icv_brain_volume", "scanner", "Within-person regression + scanner"), ferow("Intracranial volume", "sri24_icv_brain_volume", "site_year", "Within-person regression + site and study year"),
-  row("Superior frontal gray matter", "As in the paper", "k2_s1", PUB), row("Superior frontal gray matter", "+ site", "k2_site", PUB), row("Superior frontal gray matter", "+ site + scanner model", "sf_scan"),
+  row("Superior frontal gray matter", "As in the paper", "k3_s1", PUB), row("Superior frontal gray matter", "+ site", "k3_site", PUB), row("Superior frontal gray matter", "+ site + scanner model", "sf_scan"),
   row("Superior frontal gray matter", "+ site + scanner + study year", "sf_scan_wave"), row("Superior frontal gray matter", "+ a level for each site and study year", "sf_siteyear"),
   ferow("Superior frontal gray matter", "sf_bilat", "none", "Within-person regression"), ferow("Superior frontal gray matter", "sf_bilat", "scanner", "Within-person regression + scanner"), ferow("Superior frontal gray matter", "sf_bilat", "site_year", "Within-person regression + site and study year"))
 lv <- c("As in the paper", "+ site", "+ site + scanner model", "+ site + scanner + study year", "+ site + scanner + study year by site", "+ a level for each site and study year", "Within-person regression", "Within-person regression + scanner", "Within-person regression + site and study year")
@@ -89,7 +89,7 @@ pD <- ggplot(D, aes(est, spec, colour = kind)) + geom_vline(xintercept = 0, colo
 ggsave(file.path(FIG, "4_estimates_by_adjustment.png"), pD, width = 10.5, height = 5.4, dpi = 200)
 
 # E. ICV split into gray matter, white matter and CSF
-E <- rbind(row("ICV", "GSC-FPCA", "k2_negctl_icv"), row("Gray matter", "GSC-FPCA", "comp_gm"), row("White matter", "GSC-FPCA", "comp_wm"), row("CSF", "GSC-FPCA", "comp_csf"),
+E <- rbind(row("ICV", "GSC-FPCA", "k3_negctl_icv"), row("Gray matter", "GSC-FPCA", "comp_gm"), row("White matter", "GSC-FPCA", "comp_wm"), row("CSF", "GSC-FPCA", "comp_csf"),
   row("ICV", "GSC-FPCA + site + scanner", "icv_scan"), row("Gray matter", "GSC-FPCA + site + scanner", "comp_gm_scan"), row("White matter", "GSC-FPCA + site + scanner", "comp_wm_scan"), row("CSF", "GSC-FPCA + site + scanner", "comp_csf_scan"),
   ferow("ICV", "sri24_icv_brain_volume", "none", "Within-person regression"), ferow("Gray matter", "sri24_icv_brain_gm", "none", "Within-person regression"),
   ferow("White matter", "sri24_icv_brain_wm", "none", "Within-person regression"), ferow("CSF", "sri24_icv_brain_csf", "none", "Within-person regression"))

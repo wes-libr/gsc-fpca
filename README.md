@@ -6,7 +6,7 @@ This repository holds the code for the paper
 
 The code is for the revised version of the paper (November 2026). Code for the first version, posted on bioRxiv on 25 February 2026, is in the earlier history of this repository.
 
-**The paper cites Lucy Shao's repository, https://github.com/l66shao/GSC-FPCA, as the reference version of this code.** This repository is a mirror of it, kept by Wesley Thompson. If the two ever differ, use that one.
+**This is the repository cited in the paper.** It continues the code first posted at https://github.com/l66shao/GSC-FPCA, whose history it includes.
 
 ## The method in brief
 
@@ -91,25 +91,27 @@ The example uses data from the National Consortium on Alcohol and Neurodevelopme
 cd application
 Rscript extract_ncanda_data.R   # data/ncanda_dat.csv
 Rscript build_ext.R         # ext_all.rds and rois.rds (participant level: keep them private)
-Rscript queue_k2.R 1        # k = 2: four chains, placebo, sensitivity analyses, negative controls,
-                            #   34 regions, 50 pseudo-treatment analyses; also k = 1 placebo and negative control
-Rscript queue_k3.R 1        # the same analyses with k = 3
-Rscript queue_loo.R         # fits with k = 1 to 5 and leave-one-out for the cut posterior
-Rscript queue_reloo.R       # exact refits for controls with Pareto k above 0.7; negative control with site
-Rscript diag_k2.R           # R-hat and effective sample size across the four chains
-Rscript diag_k3.R
-APP_Q=2 APP_NLOOP=5500 APP_BURN=500 APP_SEED=20261104 APP_OUT=out_final_k2 Rscript application_final.R
-Rscript make_tables.R       # rows of Tables 4 and 8, pseudo-treatment summary
-Rscript make_numbers.R      # rows of Tables 5 and 6, numbers quoted in Section 4 and Appendix B
+Rscript queue_first_onset_k3.R 1   # primary specification, k = 3: four chains, placebo, sensitivity analyses,
+                                   #   negative control, total gray matter, 34 regions, 50 pseudo-treatment analyses
+Rscript queue_first_onset.R 1      # the same analyses with k = 2 and k = 1, and fits with k = 4 and 5, with the
+                                   #   leave-one-out calculation for the cut posterior
+Rscript queue_reloo.R              # exact refits for controls with Pareto k above 0.7
+Rscript diag_k3.R                  # R-hat and effective sample size across the four chains
+Rscript diag_k2.R
+APP_Q=3 APP_NLOOP=5500 APP_BURN=500 APP_SEED=20261104 APP_OUT=out_final_k3 Rscript application_final.R
+Rscript make_tables.R              # rows of the sensitivity and region tables, pseudo-treatment summary
+Rscript make_numbers.R             # numbers quoted in Section 4 and the supplement
 ```
 
-Several workers can run each queue at once (`Rscript queue_k2.R 2`, and so on); they share the analyses through claim folders, and finished analyses are skipped on restart. Fits are saved in `res2/`. Each fit with k = 2 and 5,500 iterations takes about two minutes.
+Several workers can run each queue at once (`Rscript queue_first_onset_k3.R 2`, and so on); they share the analyses through claim folders, and finished analyses are skipped on restart. Fits are saved in `res2/`. Each fit with 5,500 iterations takes about two minutes.
+
+Treated participants are those who report 12 or more binge drinking episodes in the past year at some analyzed visit, treated from that visit on whatever they report later (`discont = "itt"`, the default in `app2_core.R`; `APP_DISCONT=itt` in `application_final.R`). The first posting kept only participants whose heavy binge drinking persisted (`discont = "drop"`), which is now a sensitivity analysis, as is censoring at discontinuation (`discont = "censor"`). The primary number of FPCs is k = 3, chosen by the leave-one-out rule of Section 2.3.
 
 `application_final.R` makes Figures 4 to 10, Table 3 (`demo.csv`), the mixed-model results behind Table 5 (`lme.csv`), and `att_table.csv`, which holds the primary ATT estimates. Its output files map to the figures as follows: Figure 4, `age_distribution_heavy_binge_drinking.png`; Figure 5, `diagnostic plot.png`; Figure 6, `FPC and mean.png`; Figure 7, `ATT.png`; Figure 8, `individual fit.png`; Figure 9, `covariate plots.png`; Figure 10, `race plot.png`.
 
 ### Scanner changes and the negative control (Section 4 and Appendix B, Table 7)
 
-`application/scanner_check/` checks whether the recorded scanner changes over follow-up, or any change shared by the scans at a site in a given study year, explain the intracranial volume (ICV) negative control, and splits the ICV estimate into gray matter, white matter and CSF. Run the scripts from `application/`, after `build_ext.R` and `queue_k2.R`, whose fits `k2_negctl_icv`, `k2_negctl_icv_site`, `k2_s1` and `k2_site` they reuse:
+`application/scanner_check/` checks whether the recorded scanner changes over follow-up, or any change shared by the scans at a site in a given study year, explain the intracranial volume (ICV) negative control, and splits the ICV estimate into gray matter, white matter and CSF. Run the scripts from `application/`, after `build_ext.R` and `queue_first_onset_k3.R`, whose fits `k3_negctl_icv`, `k3_negctl_icv_site`, `k3_s1` and `k3_site` they reuse:
 
 ```sh
 cd application

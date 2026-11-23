@@ -1,4 +1,5 @@
-# Empirical example, rewritten so that each analysis choice is an option. Same design as the original script unless an
+# Empirical example, with each analysis choice as an option. Default: treated from the first report of 12+ binge episodes a year
+# (discont = "itt"); the first posting dropped participants who later fell below 12 (discont = "drop"). Otherwise the design is as in the original script unless an
 # option changes it. Writes only aggregate summaries and posterior draws of aggregate quantities.
 suppressPackageStartupMessages({library(Rcpp); library(RcppArmadillo); library(splines); library(MASS)})
 dir.create("cpp_cache", showWarnings = FALSE)
@@ -12,7 +13,7 @@ M$sf_orig <- M$superiorfrontal_grayvol           # column in ncanda_dat.csv; in 
 orig_cols <- c("visit", "sri24_icv_brain_volume", "site", "sex", "visit_age", "race_label", "binge", "id", "base_age", "sexM", "sexF", "superiorfrontal_grayvol", "binge12", "first_binge_visit", "base_age_cat12_14", "base_age_cat15_17", "base_age_cat18_21", "abnormal")
 # covs_t: covariates with age-varying effects Gamma_j(t), one spline coefficient vector each (X_sparse in the sampler).
 # covs_c: covariates with constant effects beta (X_sparse_c); values may change from visit to visit (site, scanner, study year).
-defaults <- list(label = "x", outcome = "sf_bilat", Q = 1, amax = 21, discont = "drop", controls = "all", covs_t = c("icv_baseline", "sexF", "race_labelBlack", "race_labelAsian", "race_labelWhite"), covs_c = NULL,
+defaults <- list(label = "x", outcome = "sf_bilat", Q = 1, amax = 21, discont = "itt", controls = "all", covs_t = c("icv_baseline", "sexF", "race_labelBlack", "race_labelAsian", "race_labelWhite"), covs_c = NULL,
                  nloop = 2500, burnin = 500, thin = 1, seed = 20261104, psloo = 0, placebo = FALSE, fake = FALSE, keep_draws = TRUE, want = NULL)
 
 prep_data <- function(o) {

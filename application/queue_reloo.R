@@ -4,8 +4,8 @@ dir.create("reloo", showWarnings = FALSE)
 lme <- function(v) { m <- max(v); m + log(mean(exp(v - m))) }
 fits <- list(list(label = "primary_s1", Q = 1), list(label = "k2_s1", Q = 2), list(label = "k3_s1", Q = 3), list(label = "kk4", Q = 4), list(label = "kk5", Q = 5))
 sites <- c("siteB", "siteC", "siteD", "siteE")
-if (!file.exists("res2/k2_negctl_icv_site.rds")) {
-  r <- run_app(list(label = "k2_negctl_icv_site", Q = 2, outcome = "sri24_icv_brain_volume", covs_t = c("sexF", "race_labelBlack", "race_labelAsian", "race_labelWhite"), covs_c = sites))
+if (!file.exists("res2/k3_negctl_icv_site.rds")) {
+  r <- run_app(list(label = "k3_negctl_icv_site", Q = 3, outcome = "sri24_icv_brain_volume", covs_t = c("sexF", "race_labelBlack", "race_labelAsian", "race_labelWhite"), covs_c = sites))
   a <- r$att; print(a[a$method == "gsc1" & a$bin %in% c("all", "year 1", "year 2", "year 3"), c("bin", "n", "est", "lo", "hi")], digits = 3)
 }
 for (f in fits) {

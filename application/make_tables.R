@@ -6,21 +6,21 @@ pick <- function(r, meth = "gsc1", bin = "all") { a <- r$att; a[a$method == meth
 cell <- function(r, meth = "gsc1", bin = "all") { if (is.null(r)) return("--"); x <- pick(r, meth, bin); sprintf("%s %s", neg(x$est), ci(x$lo, x$hi)) }
 cell2 <- function(r, meth = "gsc1", bin = "all") cell(r, meth, bin)
 specs <- list(
-  list("Primary specification ($k=2$)", "k2_s1", "primary_s1"),
-  list("Prior mean zero", "k2_s1", "primary_s1", "gsc0"),
+  list("Primary specification ($k=3$)", "k3_s1", "k2_s1"),
+  list("Prior mean zero", "k3_s1", "k2_s1", "gsc0"),
   list("\\emph{Number of FPCs}", NULL),
-  list("$k=1$", "primary_s1", NULL), list("$k=3$", "k3_s1", NULL), list("$k=4$", "kk4", NULL), list("$k=5$", "kk5", NULL),
+  list("$k=1$", "primary_s1", NULL), list("$k=2$", "k2_s1", NULL), list("$k=4$", "kk4", NULL), list("$k=5$", "kk5", NULL),
   list("\\emph{Outcome}", NULL),
-  list("Left hemisphere only", "k2_left", "left"), list("Right hemisphere only", "k2_right", "right"),
+  list("Left hemisphere only", "k3_left", "k2_left"), list("Right hemisphere only", "k3_right", "k2_right"),
   list("\\emph{Treatment definition}", NULL),
-  list("Discontinuers as treated", "k2_disc_itt", "disc_itt"), list("Discontinuers censored", "k2_disc_censor", "disc_censor"),
+  list("Persistent heavy drinking only", "k3_disc_drop", "k2_disc_drop"), list("Censored at discontinuation", "k3_disc_censor", "k2_disc_censor"),
   list("\\emph{Controls}", NULL),
-  list("Excluding later treated", "k2_ctl_nolater", "ctl_nolater"), list("No binge drinking", "k2_ctl_zero", "ctl_zero"),
+  list("Excluding later treated", "k3_ctl_nolater", "k2_ctl_nolater"), list("No binge drinking", "k3_ctl_zero", "k2_ctl_zero"),
   list("\\emph{Covariates added}", NULL),
-  list("Site", "k2_site", "site"), list("Site, education, family history, puberty", "k2_rich", "rich"), list("Above, baseline cannabis, tobacco", "k2_rich_sub", "rich_sub"), list("Site, cumulative cannabis, tobacco", "k2_couse", "couse"),
+  list("Site", "k3_site", "k2_site"), list("Site, education, family history, puberty", "k3_rich", "k2_rich"), list("Above, baseline cannabis, tobacco", "k3_rich_sub", "k2_rich_sub"), list("Site, cumulative cannabis, tobacco", "k3_couse", "k2_couse"),
   list("\\emph{Age range}", NULL),
-  list("Post-treatment visits to age 20.5", "k2_age_bins", NULL, "gsc1", "all age<=20.5"),
-  list("Ages to 25, discontinuers dropped", "k2_win25", "win25"), list("Ages to 25, discontinuers censored", "k2_win25_censor", "win25_censor"))
+  list("Post-treatment visits to age 20.5", "k3_age_bins", NULL, "gsc1", "all age<=20.5"),
+  list("Ages to 25", "k3_win25", "k2_win25"), list("Ages to 25, censored at discontinuation", "k3_win25_censor", "k2_win25_censor"))
 rows <- character()
 for (sp in specs) {
   if (is.null(sp[[2]])) { rows <- c(rows, sprintf("\\multicolumn{4}{l}{%s} \\\\", sp[[1]])); next }
@@ -28,14 +28,14 @@ for (sp in specs) {
   nn <- if (is.null(r2)) "--" else sprintf("%d/%d/%d", r2$meta$Ntr, r2$meta$Nco, pick(r2, m, b)$n)
   rows <- c(rows, sprintf("%s & %s & %s & %s \\\\", sp[[1]], nn, cell(r2, m, b), if (is.null(sp[[3]])) "--" else cell(r1, m, "all")))
 }
-af <- read.csv("out_final_k2/att_table.csv"); xf <- af[af$label == "all post-exposure", ]
-rows[1] <- sprintf("Primary specification ($k=2$) & 115/513/182 & %s %s & %s \\\\", neg(xf$est), ci(xf$pred_lo, xf$pred_hi), cell(res("primary_s1")))
+af <- read.csv("out_final_k3/att_table.csv"); xf <- af[af$label == "all post-exposure", ]
+r0 <- res("k3_s1"); rows[1] <- sprintf("Primary specification ($k=3$) & %d/%d/%d & %s %s & %s \\\\", r0$meta$Ntr, r0$meta$Nco, xf$n, neg(xf$est), ci(xf$pred_lo, xf$pred_hi), cell(res("k2_s1")))
 writeLines(rows, "tab_sens_rows.tex")
 # ROI table
 rois <- readRDS("rois.rds")
-tab <- do.call(rbind, lapply(rois, function(ro) { r <- if (ro == "superiorfrontal_grayvol") res("k2_s1") else res(paste0("k2_roi_", ro)); if (is.null(r)) return(NULL); x <- pick(r); data.frame(roi = ro, est = x$est, lo = x$lo, hi = x$hi, p_neg = x$p_neg, sc = r$meta$sc) }))
+tab <- do.call(rbind, lapply(rois, function(ro) { r <- if (ro == "superiorfrontal_grayvol") res("k3_s1") else res(paste0("k3_roi_", ro)); if (is.null(r)) return(NULL); x <- pick(r); data.frame(roi = ro, est = x$est, lo = x$lo, hi = x$hi, p_neg = x$p_neg, sc = r$meta$sc) }))
 if (!is.null(tab)) {
-  af <- read.csv("out_final_k2/att_table.csv"); xf <- af[af$label == "all post-exposure", ]; js <- tab$roi == "superiorfrontal_grayvol"
+  af <- read.csv("out_final_k3/att_table.csv"); xf <- af[af$label == "all post-exposure", ]; js <- tab$roi == "superiorfrontal_grayvol"
   tab$est[js] <- xf$est; tab$lo[js] <- xf$pred_lo; tab$hi[js] <- xf$pred_hi; tab$p_neg[js] <- xf$post_prob_neg
   tab$p2 <- 2 * pmin(tab$p_neg, 1 - tab$p_neg); tab$p2[tab$p2 < 2 / 1000] <- 2 / 1000
   tab$bh <- p.adjust(tab$p2, "BH")
@@ -46,7 +46,7 @@ if (!is.null(tab)) {
   writeLines(sprintf("%s & %s & %s & %s \\\\", pretty[nm(tab$roi)], neg(tab$est), ci(tab$lo, tab$hi), sprintf("%.3f", tab$bh)), "tab_roi_rows.tex")
 }
 # calibration with pseudo-treatments
-fk <- list.files("res2", pattern = "^k2_fake_.*rds$", full.names = TRUE)
+fk <- list.files("res2", pattern = "^k3_fake_.*rds$", full.names = TRUE)
 if (length(fk)) {
   z <- do.call(rbind, lapply(fk, function(f) { x <- pick(readRDS(f)); data.frame(est = x$est, lo = x$lo, hi = x$hi, n = x$n, units = x$units) }))
   z0 <- do.call(rbind, lapply(fk, function(f) { x <- pick(readRDS(f), "gsc0"); data.frame(est = x$est) }))

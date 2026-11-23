@@ -74,12 +74,14 @@ length(unique(dat$id))
 #dim(dat)
 #length(unique(dat$id))
 
-## keep only those treated continuously after treatment start
+## Treatment definition. APP_DISCONT=itt (primary): treated from the first report of 12+ binge episodes, whatever is
+## reported later. APP_DISCONT=drop: drop participants whose reports later fell below 12 (primary of the first posting).
+APP_DISCONT <- Sys.getenv("APP_DISCONT", "itt")
 dat$keep <- 1
 for(i in 1:length(unique(dat$id))){
   dat_i = dat[dat$id == unique(dat$id)[i],]
   if(max(dat_i$binge12)>0){
-    if(min(dat_i$binge[dat_i$binge12 > 0])<12) dat_i$keep = 0
+    if(APP_DISCONT=="drop" && min(dat_i$binge[dat_i$binge12 > 0])<12) dat_i$keep = 0
   }
   dat[dat$id == unique(dat$id)[i],] = dat_i
 }

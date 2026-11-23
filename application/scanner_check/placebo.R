@@ -11,8 +11,8 @@ assign("M", M, envir = globalenv())
 sites <- c("siteB", "siteC", "siteD", "siteE"); scan <- c("A_prisma", "B_creator", "C_uhp", "D_prisma")
 icv_t <- c("sexF", "race_labelBlack", "race_labelAsian", "race_labelWhite")
 specs <- list(); add <- function(...) specs[[length(specs) + 1]] <<- list(...)
-add(label = "icv_placebo", Q = 2, outcome = "sri24_icv_brain_volume", covs_t = icv_t, placebo = TRUE)
-add(label = "icv_scan_placebo", Q = 2, outcome = "sri24_icv_brain_volume", covs_t = icv_t, covs_c = c(sites, scan), placebo = TRUE)
+add(label = "icv_placebo", Q = 3, outcome = "sri24_icv_brain_volume", covs_t = icv_t, placebo = TRUE)
+add(label = "icv_scan_placebo", Q = 3, outcome = "sri24_icv_brain_volume", covs_t = icv_t, covs_c = c(sites, scan), placebo = TRUE)
 dir.create("res2", showWarnings = FALSE)
 for (i in seq_along(specs)) {
   if ((i - 1) %% 2 != wk) next
