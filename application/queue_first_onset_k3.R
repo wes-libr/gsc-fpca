@@ -18,7 +18,9 @@ for (n in names(sens)) do.call(add, c(list(label = paste0("k3_", n), Q = 3), sen
 add(label = "k3_age_bins", Q = 3, age_bins = TRUE)
 add(label = "k3_negctl_icv_site", Q = 3, outcome = "sri24_icv_brain_volume", covs_t = nc_t, covs_c = sites)
 add(label = "k3_total_gm", Q = 3, outcome = "sri24_icv_brain_gm")
-for (r in readRDS("rois.rds")) add(label = paste0("k3_roi_", r), Q = 3, outcome = r, nloop = 1500, burnin = 500)
+# regional fits save participant-level post-treatment differences (save_units), which hier_regions.R uses for the correlations among regions
+for (r in readRDS("rois.rds")) add(label = paste0("k3_roi_", r), Q = 3, outcome = r, nloop = 1500, burnin = 500, save_units = TRUE)
+add(label = "k3_units_sf", Q = 3, nloop = 1500, burnin = 500, save_units = TRUE)
 for (r in 1:50) add(label = sprintf("k3_fake_%02d", r), Q = 3, fake = TRUE, seed = 9000 + r, nloop = 1000, burnin = 500)
 for (sp in specs) {
   f <- file.path("res2", paste0(sp$label, ".rds"))

@@ -189,6 +189,8 @@ run_app <- function(opt) {
     }
   }
   att <- do.call(rbind, att)
+  # optional (save_units = TRUE): posterior-mean post-treatment difference for each observation. Participant level: it stays in res2/, which is not committed.
+  unit_post <- if (isTRUE(o$save_units) && !o$placebo) data.frame(id = df$id[bins[["all"]]], diff = rowMeans(df$y[bins[["all"]]] - Fit1[bins[["all"]], , drop = FALSE])) else NULL
   D_s <- t(sapply(fit[[3]], function(x) diag(as.matrix(x)))); if (Q == 1) D_s <- t(D_s)
   Nu <- t(sapply(fit[[11]], function(x) as.vector(x))); if (Q == 1) Nu <- t(Nu)
   # covariance function draws on an age grid
@@ -205,6 +207,7 @@ run_app <- function(opt) {
     nu1_sd = mean(Nu[, 1] / sqrt(D_s[, 1])), nu1_sd_lo = quantile(Nu[, 1] / sqrt(D_s[, 1]), .025, names = FALSE), nu1_sd_hi = quantile(Nu[, 1] / sqrt(D_s[, 1]), .975, names = FALSE), S = S, seed = o$seed, placebo = o$placebo)
   out <- list(att = att, meta = meta, draws = draws, sigma2 = sg, D = D_s, Nu = Nu, Cov = Cv, NuF = NuF, age_grid = rng[1] + (rng[2] - rng[1]) * (ga - 1) / 1000, eig_share = ec$values[1:Q] / sum(ec$values), eig_fun = ec$vectors[, 1:Q, drop = FALSE] / sqrt(5 / 1000), eig_age = rng[1] + (rng[2] - rng[1]) * (gi - 1) / 1000)
   if (o$psloo == 1) { out$loo <- elpd_cut(fit[[9]], bc == 1) }
+  out$unit_post <- unit_post
   saveRDS(out, file.path("res2", paste0(o$label, ".rds")))
   write.csv(att, file.path("res2", paste0(o$label, "_att.csv")), row.names = FALSE)
   out

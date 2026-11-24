@@ -37,17 +37,9 @@ tab <- do.call(rbind, lapply(rois, function(ro) { r <- if (ro == "superiorfronta
 if (!is.null(tab)) {
   af <- read.csv("out_final_k3/att_table.csv"); xf <- af[af$label == "all post-exposure", ]; js <- tab$roi == "superiorfrontal_grayvol"
   tab$est[js] <- xf$est; tab$lo[js] <- xf$pred_lo; tab$hi[js] <- xf$pred_hi; tab$p_neg[js] <- xf$post_prob_neg; tab$pred_sd[js] <- xf$pred_sd
-  # Two-sided tail probability from a normal approximation to the posterior predictive distribution of the ATT.
-  # (With 1,000 draws the empirical tail probability cannot go below 2/1000, which puts a floor of 0.068 on the adjusted value.)
-  # Benjamini-Hochberg adjustment over the 34 regions. Superior frontal volume is the pre-specified primary outcome;
-  # the regional analysis is secondary.
-  tab$p2 <- 2 * pnorm(-abs(tab$est / tab$pred_sd))
-  tab$bh <- p.adjust(tab$p2, "BH")
   tab <- tab[order(tab$est), ]; tab$rank <- seq_len(nrow(tab))
   write.csv(tab, "roi_table.csv", row.names = FALSE)
-  nm <- function(x) { x <- sub("_grayvol$", "", x); x }
-  pretty <- c(bankssts = "Banks of superior temporal sulcus", caudalanteriorcingulate = "Caudal anterior cingulate", caudalmiddlefrontal = "Caudal middle frontal", cuneus = "Cuneus", entorhinal = "Entorhinal", fusiform = "Fusiform", inferiorparietal = "Inferior parietal", inferiortemporal = "Inferior temporal", isthmuscingulate = "Isthmus cingulate", lateraloccipital = "Lateral occipital", lateralorbitofrontal = "Lateral orbitofrontal", lingual = "Lingual", medialorbitofrontal = "Medial orbitofrontal", middletemporal = "Middle temporal", parahippocampal = "Parahippocampal", paracentral = "Paracentral", parsopercularis = "Pars opercularis", parsorbitalis = "Pars orbitalis", parstriangularis = "Pars triangularis", pericalcarine = "Pericalcarine", postcentral = "Postcentral", posteriorcingulate = "Posterior cingulate", precentral = "Precentral", precuneus = "Precuneus", rostralanteriorcingulate = "Rostral anterior cingulate", rostralmiddlefrontal = "Rostral middle frontal", superiorfrontal = "Superior frontal", superiorparietal = "Superior parietal", superiortemporal = "Superior temporal", supramarginal = "Supramarginal", frontalpole = "Frontal pole", temporalpole = "Temporal pole", transversetemporal = "Transverse temporal", insula = "Insula")
-  writeLines(sprintf("%s & %s & %s & %s \\\\", pretty[nm(tab$roi)], neg(tab$est), ci(tab$lo, tab$hi), sprintf("%.3f", tab$bh)), "tab_roi_rows.tex")
+  # rows of the regional table are written by hier_regions.R, which adds the shrunken estimates
 }
 # calibration with pseudo-treatments
 fk <- list.files("res2", pattern = "^k3_fake_.*rds$", full.names = TRUE)

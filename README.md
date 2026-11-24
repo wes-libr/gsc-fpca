@@ -99,7 +99,8 @@ Rscript queue_reloo.R              # exact refits for controls with Pareto k abo
 Rscript diag_k3.R                  # R-hat and effective sample size across the four chains
 Rscript diag_k2.R
 APP_Q=3 APP_NLOOP=5500 APP_BURN=500 APP_SEED=20261104 APP_OUT=out_final_k3 Rscript application_final.R
-Rscript make_tables.R              # rows of the sensitivity and region tables, pseudo-treatment summary
+Rscript make_tables.R              # rows of the sensitivity table, roi_table.csv, pseudo-treatment summary
+Rscript hier_regions.R             # hierarchical model for the 34 regional ATTs: hier_*.csv and rows of the region table
 Rscript make_numbers.R             # numbers quoted in Section 4 and the supplement
 ```
 
